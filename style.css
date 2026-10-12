@@ -17,15 +17,19 @@
   align-items: center;
   justify-content: center;
 }
-.product-image{
+
+.product-image {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  /* Đổi từ cover sang contain để ảnh thu nhỏ lại vừa khít khung, thấy đủ toàn bộ trang giấy */
+  object-fit: contain; 
   object-position: center;
   color: transparent;
   transition: transform 0.3s ease;
+  padding: 8px; /* Thêm khoảng đệm nhỏ để ảnh không bị dính sát viền khung */
 }
+
 .product-card:hover .product-image{
   transform: scale(1.03);
 }
