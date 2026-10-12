@@ -6,27 +6,27 @@
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec"; // Dán URL Web App kết thúc bằng /exec tại đây.
 const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
 const PRODUCTS = [
-  { id: "to-mau-theo-hinh-mau", name: "Tô màu theo hình mẫu", category: "Sáng tạo", description: "Bé quan sát mẫu màu và tô theo gợi ý.", image: "images/to-mau-theo-hinh-mau.jpg", price10: 1000, icon: "🎨" },
-  { id: "to-mau-tu-do", name: "Tô màu tự do", category: "Sáng tạo", description: "Những bức tranh để bé thỏa sức sáng tạo.", image: "images/to-mau-tu-do.jpg", price10: 2000, icon: "🖍️" },
-  { id: "tap-dem-1-10", name: "Tập đếm 1–10", category: "Toán học", description: "Làm quen số từ 1 đến 10 qua hình ảnh đáng yêu.", image: "images/tap-dem-1-10.jpg", price10: 3000, icon: "🔢" },
-  { id: "tap-cong-pham-vi-10", name: "Tập cộng phạm vi 10", category: "Toán học", description: "Bước đầu làm quen với phép cộng.", image: "images/tap-cong-pham-vi-10.jpg", price10: 4000, icon: "➕" },
-  { id: "tap-tru-pham-vi-10", name: "Tập trừ phạm vi 10", category: "Toán học", description: "Luyện tập phép trừ qua bài tập trực quan.", image: "images/tap-tru-pham-vi-10.jpg", price10: 5000, icon: "➖" },
-  { id: "tap-dem-10-20", name: "Tập đếm 10–20", category: "Toán học", description: "Làm quen số từ 10 đến 20 qua hình ảnh.", image: "images/tap-dem-10-20.jpg", price10: 6000, icon: "🔟" },
-  { id: "tap-cong-pham-vi-10-20", name: "Tập cộng phạm vi 10–20", category: "Toán học", description: "Thực hành phép cộng với các số lớn hơn.", image: "images/tap-cong-pham-vi-10-20.jpg", price10: 7000, icon: "🧮" },
-  { id: "tap-tru-pham-vi-10-20", name: "Tập trừ phạm vi 10–20", category: "Toán học", description: "Luyện phép trừ trong phạm vi 10–20.", image: "images/tap-tru-pham-vi-10-20.jpg", price10: 8000, icon: "➖" },
-  { id: "tap-dem-den-100", name: "Tập đếm đến 100", category: "Toán học", description: "Khám phá các số đến 100 theo cách dễ hiểu.", image: "images/tap-dem-den-100.jpg", price10: 9000, icon: "💯" },
-  { id: "tap-cong-pham-vi-100", name: "Tập cộng phạm vi 100", category: "Toán học", description: "Bài tập cộng giúp bé rèn kỹ năng tính toán.", image: "images/tap-cong-pham-vi-100.jpg", price10: 10000, icon: "➕" },
-  { id: "tap-tru-pham-vi-100", name: "Tập trừ phạm vi 100", category: "Toán học", description: "Thực hành phép trừ trong phạm vi 100.", image: "images/tap-tru-pham-vi-100.jpg", price10: 11000, icon: "➖" },
-  { id: "tap-viet-chu-cai-viet-nam", name: "Tập viết chữ cái Việt Nam", category: "Tập viết", description: "Làm quen và luyện viết chữ cái tiếng Việt.", image: "images/tap-viet-chu-cai-viet-nam.jpg", price10: 12000, icon: "🔤" },
-  { id: "tap-viet-chu-cai-tieng-anh", name: "Tập viết chữ cái tiếng Anh", category: "Tập viết", description: "Nhận diện và luyện viết chữ cái tiếng Anh.", image: "images/tap-viet-chu-cai-tieng-anh.jpg", price10: 13000, icon: "ABC" },
-  { id: "tap-viet-so", name: "Tập viết số", category: "Tập viết", description: "Luyện nét và viết các chữ số.", image: "images/tap-viet-so.jpg", price10: 14000, icon: "✏️" },
+  { id: "to-mau-theo-hinh-mau", name: "Tô màu theo hình mẫu", category: "Sáng tạo", description: "Bé quan sát mẫu màu và tô theo gợi ý.", image: "images/to-mau-theo-hinh-mau.jpg", price10: 15000, icon: "🎨" },
+  { id: "to-mau-tu-do", name: "Tô màu tự do", category: "Sáng tạo", description: "Những bức tranh để bé thỏa sức sáng tạo.", image: "images/to-mau-tu-do.jpg", price10: 15000, icon: "🖍️" },
+  { id: "tap-dem-1-10", name: "Tập đếm 1–10", category: "Toán học", description: "Làm quen số từ 1 đến 10 qua hình ảnh đáng yêu.", image: "images/tap-dem-1-10.jpg", price10: 15000, icon: "🔢" },
+  { id: "tap-cong-pham-vi-10", name: "Tập cộng phạm vi 10", category: "Toán học", description: "Bước đầu làm quen với phép cộng.", image: "images/tap-cong-pham-vi-10.jpg", price10: 15000, icon: "➕" },
+  { id: "tap-tru-pham-vi-10", name: "Tập trừ phạm vi 10", category: "Toán học", description: "Luyện tập phép trừ qua bài tập trực quan.", image: "images/tap-tru-pham-vi-10.jpg", price10: 15000, icon: "➖" },
+  { id: "tap-dem-10-20", name: "Tập đếm 10–20", category: "Toán học", description: "Làm quen số từ 10 đến 20 qua hình ảnh.", image: "images/tap-dem-10-20.jpg", price10: 15000, icon: "🔟" },
+  { id: "tap-cong-pham-vi-10-20", name: "Tập cộng phạm vi 10–20", category: "Toán học", description: "Thực hành phép cộng với các số lớn hơn.", image: "images/tap-cong-pham-vi-10-20.jpg", price10: 15000, icon: "🧮" },
+  { id: "tap-tru-pham-vi-10-20", name: "Tập trừ phạm vi 10–20", category: "Toán học", description: "Luyện phép trừ trong phạm vi 10–20.", image: "images/tap-tru-pham-vi-10-20.jpg", price10: 15000, icon: "➖" },
+  { id: "tap-dem-den-100", name: "Tập đếm đến 100", category: "Toán học", description: "Khám phá các số đến 100 theo cách dễ hiểu.", image: "images/tap-dem-den-100.jpg", price10: 15000, icon: "💯" },
+  { id: "tap-cong-pham-vi-100", name: "Tập cộng phạm vi 100", category: "Toán học", description: "Bài tập cộng giúp bé rèn kỹ năng tính toán.", image: "images/tap-cong-pham-vi-100.jpg", price10: 15000, icon: "➕" },
+  { id: "tap-tru-pham-vi-100", name: "Tập trừ phạm vi 100", category: "Toán học", description: "Thực hành phép trừ trong phạm vi 100.", image: "images/tap-tru-pham-vi-100.jpg", price10: 15000, icon: "➖" },
+  { id: "tap-viet-chu-cai-viet-nam", name: "Tập viết chữ cái Việt Nam", category: "Tập viết", description: "Làm quen và luyện viết chữ cái tiếng Việt.", image: "images/tap-viet-chu-cai-viet-nam.jpg", price10: 15000, icon: "🔤" },
+  { id: "tap-viet-chu-cai-tieng-anh", name: "Tập viết chữ cái tiếng Anh", category: "Tập viết", description: "Nhận diện và luyện viết chữ cái tiếng Anh.", image: "images/tap-viet-chu-cai-tieng-anh.jpg", price10: 15000, icon: "ABC" },
+  { id: "tap-viet-so", name: "Tập viết số", category: "Tập viết", description: "Luyện nét và viết các chữ số.", image: "images/tap-viet-so.jpg", price10: 15000, icon: "✏️" },
   { id: "tu-duy-hinh-khoi", name: "Tư duy hình khối", category: "Tư duy", description: "Nhận diện hình dạng và rèn tư duy không gian.", image: "images/tu-duy-hinh-khoi.jpg", price10: 15000, icon: "🔷" },
-  { id: "tro-choi-me-cung", name: "Trò chơi mê cung", category: "Tư duy", description: "Tìm đường đi và luyện khả năng quan sát.", image: "images/tro-choi-me-cung.jpg", price10: 16000, icon: "🌀" },
-  { id: "sudoku-hinh-anh", name: "Sudoku hình ảnh", category: "Tư duy", description: "Sắp xếp hình ảnh theo quy luật đơn giản.", image: "images/sudoku-hinh-anh.jpg", price10: 17000, icon: "🧩" },
-  { id: "tro-choi-tu-duy-logic", name: "Trò chơi rèn luyện tư duy logic", category: "Tư duy", description: "Những thử thách vui để bé suy luận.", image: "images/tro-choi-tu-duy-logic.jpg", price10: 18000, icon: "🧠" },
-  { id: "noi-bong-va-hinh-anh", name: "Nối bóng và hình ảnh", category: "Tư duy", description: "Tìm hình phù hợp với chiếc bóng tương ứng.", image: "images/noi-bong-va-hinh-anh.jpg", price10: 19000, icon: "🌤️" },
-  { id: "phan-biet-so-chan-le", name: "Phân biệt số chẵn, số lẻ", category: "Toán học", description: "Nhận biết số chẵn và số lẻ qua ví dụ.", image: "images/phan-biet-so-chan-le.jpg", price10: 20000, icon: "🔢" },
-  { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", price10: 21000, icon: "⚖️" }
+  { id: "tro-choi-me-cung", name: "Trò chơi mê cung", category: "Tư duy", description: "Tìm đường đi và luyện khả năng quan sát.", image: "images/tro-choi-me-cung.jpg", price10: 15000, icon: "🌀" },
+  { id: "sudoku-hinh-anh", name: "Sudoku hình ảnh", category: "Tư duy", description: "Sắp xếp hình ảnh theo quy luật đơn giản.", image: "images/sudoku-hinh-anh.jpg", price10: 15000, icon: "🧩" },
+  { id: "tro-choi-tu-duy-logic", name: "Trò chơi rèn luyện tư duy logic", category: "Tư duy", description: "Những thử thách vui để bé suy luận.", image: "images/tro-choi-tu-duy-logic.jpg", price10: 15000, icon: "🧠" },
+  { id: "noi-bong-va-hinh-anh", name: "Nối bóng và hình ảnh", category: "Tư duy", description: "Tìm hình phù hợp với chiếc bóng tương ứng.", image: "images/noi-bong-va-hinh-anh.jpg", price10: 15000, icon: "🌤️" },
+  { id: "phan-biet-so-chan-le", name: "Phân biệt số chẵn, số lẻ", category: "Toán học", description: "Nhận biết số chẵn và số lẻ qua ví dụ.", image: "images/phan-biet-so-chan-le.jpg", price10: 15000, icon: "🔢" },
+  { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", price10: 15000, icon: "⚖️" }
 ];
 
 const $ = (selector, root = document) => root.querySelector(selector);
