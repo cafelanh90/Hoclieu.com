@@ -3,7 +3,7 @@
  * Để thêm/sửa sản phẩm, chỉnh mảng PRODUCTS bên dưới.
  * 20 trang tự động có giá gấp đôi 10 trang.
  */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtpmRGnNCExaj9S6eEy2lYMka1r_iF5icdgtwsAncXK36GF9e53krEp-VC8q1OahnB/exec"; // Dán URL Web App kết thúc bằng /exec tại đây.
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec"; // Dán URL Web App kết thúc bằng /exec tại đây.
 const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
 const PRODUCTS = [
   { id: "to-mau-theo-hinh-mau", name: "Tô màu theo hình mẫu", category: "Sáng tạo", description: "Bé quan sát mẫu màu và tô theo gợi ý.", image: "images/to-mau-theo-hinh-mau.jpg", price10: 1000, icon: "🎨" },
