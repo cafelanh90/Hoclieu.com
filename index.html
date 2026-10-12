@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff7f0">
+  <meta name="description" content="Nhà Bé Học - học liệu bản in đáng yêu cho bé học vui mỗi ngày.">
+  <title>Nhà Bé Học | Học vui mỗi ngày</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="#home" aria-label="Nhà Bé Học - Trang chủ">
+    <span class="brand-mark">✿</span><span><strong>Nhà Bé Học</strong><small>Học vui mỗi ngày</small></span>
+  </a>
+  <button class="menu-toggle" id="menuToggle" aria-label="Mở menu">☰</button>
+  <nav id="mainNav">
+    <a href="#home">Trang chủ</a><a href="#products">Sản phẩm</a><a href="#how">Cách đặt hàng</a><a href="#faq">Câu hỏi thường gặp</a>
+  </nav>
+  <button class="cart-button" id="openCart" aria-label="Mở giỏ hàng">Giỏ hàng <span id="cartCount">0</span></button>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="hero-copy">
+      <span class="eyebrow">HỌC LIỆU BẢN IN • DÀNH CHO BÉ</span>
+      <h1>Mỗi ngày một chút,<br><em>bé học vui hơn!</em></h1>
+      <p>Những trang học liệu dễ thương giúp bé làm quen với chữ, số, màu sắc và tư duy qua hoạt động vừa học vừa chơi.</p>
+      <div class="hero-actions"><a class="button primary" href="#products">Khám phá học liệu <span>↗</span></a><a class="text-link" href="#how">Cách đặt hàng →</a></div>
+      <div class="hero-note"><span>♡</span> Chọn chủ đề bé thích · Tùy chọn 10 hoặc 20 trang</div>
+    </div>
+    <div class="hero-art" aria-label="Minh họa học liệu cho bé">
+      <div class="sun"></div><div class="art-card art-card-back"><span>ＡＢＣ</span><div class="scribbles">〰 ✿ 〰</div></div>
+      <div class="art-card art-card-front"><div class="worksheet-title">MY LITTLE<br>WORKBOOK</div><div class="rainbow">◜🌈◝</div><div class="art-icons"><span>🐻</span><span>🍓</span><span>⭐</span></div><small>LEARN • PLAY • GROW</small></div>
+      <span class="float flower">✿</span><span class="float star">✦</span><span class="float heart">♡</span><span class="float pencil">✎</span>
+    </div>
+  </section>
+
+  <section class="trust-strip">
+    <div><span class="strip-icon">✎</span><span><strong>Học qua thực hành</strong><small>Trang in để bé tự khám phá</small></span></div>
+    <div><span class="strip-icon">♡</span><span><strong>Chọn theo sở thích</strong><small>Nhiều chủ đề đáng yêu</small></span></div>
+    <div><span class="strip-icon">☀</span><span><strong>Linh hoạt số trang</strong><small>Gói 10 trang hoặc 20 trang</small></span></div>
+  </section>
+
+  <section class="section products-section" id="products">
+    <div class="section-heading">
+      <div><span class="eyebrow">GÓC HỌC TẬP CỦA BÉ</span><h2>Chọn học liệu bé yêu thích</h2><p>Chọn chủ đề, số trang và phong cách minh họa trước khi thêm vào giỏ.</p></div>
+      <div class="catalog-count"><strong id="productCount">21</strong><span>chủ đề</span></div>
+    </div>
+    <div class="catalog-controls">
+      <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Tìm chủ đề học liệu..." aria-label="Tìm sản phẩm"></label>
+      <div class="filter-buttons" id="categoryFilters">
+        <button class="filter active" data-category="all">Tất cả</button>
+        <button class="filter" data-category="Sáng tạo">Sáng tạo</button>
+        <button class="filter" data-category="Toán học">Toán học</button>
+        <button class="filter" data-category="Tập viết">Tập viết</button>
+        <button class="filter" data-category="Tư duy">Tư duy</button>
+      </div>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+    <div class="empty-state hidden" id="emptyState">Chưa tìm thấy chủ đề phù hợp. Bạn thử từ khóa khác nhé!</div>
+  </section>
+
+  <section class="theme-section" id="themes">
+    <div class="theme-copy"><span class="eyebrow">THẾ GIỚI CỦA BÉ</span><h2>Bé thích phong cách nào?</h2><p>Mỗi sản phẩm có thể chọn một chủ đề minh họa hoặc phối hợp nhiều chủ đề trong cùng đơn hàng.</p></div>
+    <div class="theme-pills"><span>🐯 Con Vật</span><span>👑 Công Chúa</span><span>🍬 Bánh Kẹo</span><span>🍦 Kem</span><span>🚗 Phương tiện giao thông</span><span>🎨 Mix nhiều chủ đề</span></div>
+  </section>
+
+  <section class="section steps-section" id="how">
+    <div class="section-heading centered"><div><span class="eyebrow">ĐẶT HÀNG THẬT DỄ DÀNG</span><h2>3 bước để bắt đầu</h2><p>Bạn gửi thông tin đơn hàng, Nhà Bé Học sẽ kiểm tra và liên hệ xác nhận.</p></div></div>
+    <div class="steps-grid">
+      <article class="step-card"><span class="step-number">01</span><div class="step-icon">🧩</div><h3>Chọn học liệu</h3><p>Chọn chủ đề, số trang và kiểu minh họa phù hợp với bé.</p></article>
+      <article class="step-card"><span class="step-number">02</span><div class="step-icon">🛒</div><h3>Gửi đơn hàng</h3><p>Điền tên, số điện thoại và địa chỉ nhận hàng để gửi đơn.</p></article>
+      <article class="step-card"><span class="step-number">03</span><div class="step-icon">📦</div><h3>Xác nhận & giao hàng</h3><p>Shop kiểm tra đơn trên Google Sheets và liên hệ xác nhận.</p></article>
+    </div>
+  </section>
+
+  <section class="faq-section" id="faq">
+    <div class="faq-intro"><span class="eyebrow">BẠN MUỐN BIẾT THÊM?</span><h2>Câu hỏi thường gặp</h2><p>Thông tin cơ bản trước khi bạn đặt học liệu cho bé.</p></div>
+    <div class="faq-list">
+      <details><summary>Đây có phải sản phẩm bản in không?</summary><p>Đúng. Các sản phẩm trên website là học liệu dạng bản in. Đây không phải file tải xuống.</p></details>
+      <details><summary>Mình có thể chọn 10 trang hoặc 20 trang không?</summary><p>Có. Mỗi chủ đề có lựa chọn 10 trang và 20 trang. Giá 20 trang được tính gấp đôi giá 10 trang trong mẫu này.</p></details>
+      <details><summary>Mình có thể mix nhiều chủ đề không?</summary><p>Có. Bạn có thể chọn kiểu “Mix nhiều chủ đề” và ghi rõ mong muốn ở phần ghi chú đơn hàng.</p></details>
+      <details><summary>Đơn hàng có tự lưu vào Google Sheets không?</summary><p>Khi chủ website đã cấu hình Google Apps Script và URL kết nối hợp lệ, website sẽ gửi thông tin đơn đến bảng tính. Sau khi gửi, shop cần kiểm tra Google Sheets để xác nhận đơn đã được ghi nhận.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><a class="brand footer-brand" href="#home"><span class="brand-mark">✿</span><span><strong>Nhà Bé Học</strong><small>Học vui mỗi ngày</small></span></a><p>Những điều nhỏ bé tạo nên niềm vui học tập mỗi ngày.</p><span>© <span id="year"></span> Nhà Bé Học</span></footer>
+
+<div class="overlay hidden" id="overlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Giỏ hàng" aria-hidden="true">
+  <div class="drawer-header"><div><span class="eyebrow">ĐƠN HÀNG CỦA BẠN</span><h2>Giỏ hàng <span id="drawerCount">(0)</span></h2></div><button class="icon-button" id="closeCart" aria-label="Đóng giỏ hàng">×</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-empty" id="cartEmpty"><span>🧺</span><h3>Giỏ hàng đang trống</h3><p>Chọn một vài học liệu đáng yêu cho bé nhé.</p><button class="button primary" id="continueShopping">Chọn học liệu</button></div>
+  <div class="cart-bottom" id="cartBottom">
+    <div class="total-row"><span>Tạm tính</span><strong id="cartTotal">0 ₫</strong></div>
+    <small>Phí giao hàng (nếu có) sẽ được xác nhận sau.</small>
+    <button class="button primary full" id="goCheckout">Điền thông tin đặt hàng <span>→</span></button>
+  </div>
+</aside>
+
+<div class="modal-wrap hidden" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+  <div class="checkout-modal">
+    <div class="drawer-header"><div><span class="eyebrow">GẦN XONG RỒI!</span><h2 id="checkoutTitle">Thông tin nhận hàng</h2></div><button class="icon-button" id="closeCheckout" aria-label="Đóng">×</button></div>
+    <p class="modal-intro">Vui lòng điền thông tin để Nhà Bé Học tiếp nhận đơn hàng của bạn.</p>
+    <form id="checkoutForm">
+      <label>Họ và tên <input name="customerName" autocomplete="name" required maxlength="100" placeholder="Tên người nhận"></label>
+      <label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" required maxlength="25" placeholder="Số điện thoại liên hệ"></label>
+      <label>Địa chỉ nhận hàng <textarea name="address" autocomplete="street-address" required rows="2" maxlength="500" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></textarea></label>
+      <label>Ghi chú đơn hàng (không bắt buộc) <textarea name="notes" rows="3" maxlength="1000" placeholder="Ví dụ: muốn mix con vật và phương tiện giao thông..."></textarea></label>
+      <div class="checkout-summary"><span>Tổng tiền sản phẩm</span><strong id="checkoutTotal">0 ₫</strong></div>
+      <p class="privacy-note">Thông tin được dùng để xử lý đơn hàng. Vui lòng kiểm tra số điện thoại và địa chỉ trước khi gửi.</p>
+      <button class="button primary full" type="submit" id="submitOrder">Gửi đơn hàng <span>→</span></button>
+      <div class="form-message" id="formMessage" role="status"></div>
+    </form>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
