@@ -28,7 +28,7 @@ const PRODUCTS = [
   { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", price10: 15000, icon: "⚖️" }
 ];
 
-const $ = (selector, root = document) => root.querySelector(selector); const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const $ = (selector, root = document) => root.querySelector(selector);  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const money = n => new Intl.NumberFormat("vi-VN", {style:"currency",currency:"VND",maximumFractionDigits:0}).format(n);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 let activeCategory = "all";
@@ -76,7 +76,6 @@ function addToCart(id, card) {
   const theme = $(".theme-select", card).value;
   const key = `${id}|${pages}|${theme}`;
   
-  // Tính giá: 10 trang = 15000đ, 20 trang = 25000đ cố định
   let unitPrice = p.price10;
   if (pages === 20) {
     unitPrice = 25000;
@@ -132,41 +131,4 @@ function closeCheckout() {
 }
 function buildOrder(form) {
   const fd = new FormData(form);
-  const orderId = `NBH-${Date.now().toString().slice(-9)}`;
-  const items = cart.map(item => ({
-    productId:item.id, productName:item.name, category:item.category, pages:item.pages,
-    theme:item.theme, quantity:item.qty, unitPrice:item.unitPrice, subtotal:item.unitPrice*item.qty
-  }));
-  return {
-    orderId, createdAt:new Date().toISOString(),
-    customerName:String(fd.get("customerName") || "").trim(),
-    phone:String(fd.get("phone") || "").trim(),
-    address:String(fd.get("address") || "").trim(),
-    notes:String(fd.get("notes") || "").trim(),
-    items, itemSummary:items.map(i=>`${i.productName} (${i.pages} trang, ${i.theme}) x${i.quantity}`).join(" | "),
-    total:cartTotal(), currency:"VND", deliveryStatus:"Chưa giao", paymentStatus:"Chưa thu tiền"
-  };
-}
-async function submitOrder(event) {
-  event.preventDefault();
-  if (orderBusy || !cart.length) return;
-  const form = event.currentTarget;
-  const order = buildOrder(form);
-  const message = $("#formMessage");
-  const button = $("#submitOrder");
-  if (!GOOGLE_SCRIPT_URL.trim()) {
-    message.className = "form-message error";
-    message.textContent = "Website chưa được cấu hình Google Sheets. Đơn chưa được gửi. Vui lòng liên hệ shop hoặc cấu hình URL trong script.js.";
-    return;
-  }
-  orderBusy = true;
-  button.disabled = true;
-  button.textContent = "Đang gửi đơn...";
-  message.className = "form-message";
-  try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method:"POST", mode:"no-cors", redirect:"follow",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(order)
-    });
-    message.className = "form-message success
+  const order
