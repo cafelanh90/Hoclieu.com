@@ -40,11 +40,12 @@ function productImageMarkup(p, extraClass = "") {
 }
 
 function renderProducts() {
-  const searchInput = $("#searchInput");
   const grid = $("#productGrid");
+  if (!grid) return;
+
+  const searchInput = $("#searchInput");
   const countEl = $("#productCount");
   const emptyState = $("#emptyState");
-  if (!grid) return;
 
   const term = (searchInput ? searchInput.value : "").trim().toLocaleLowerCase("vi");
   const shown = PRODUCTS.filter(p => (activeCategory === "all" || p.category === activeCategory) &&
@@ -224,14 +225,15 @@ async function submitOrder(event) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// Khởi chạy an toàn bằng cả 2 cơ chế (tự động chạy ngay và chạy sau khi DOM load xong)
+function initApp() {
   const productGrid = $("#productGrid");
-  if (productGrid) {
-    productGrid.addEventListener("click", event => {
-      const button = event.target.closest("[data-add]");
-      if (button) addToCart(button.dataset.add, button.closest(".product-card"));
-    });
-  }
+  if (!productGrid) return; // Tránh lỗi nếu gọi khi trang chưa sẵn sàng
+
+  productGrid.addEventListener("click", event => {
+    const button = event.target.closest("[data-add]");
+    if (button) addToCart(button.dataset.add, button.closest(".product-card"));
+  });
 
   const categoryFilters = $("#categoryFilters");   if (categoryFilters) {     categoryFilters.addEventListener("click", event => {       const button = event.target.closest("[data-category]");       if (!button) return;       activeCategory = button.dataset.category;       $$(".filter", categoryFilters).forEach(el => el.classList.toggle("active", el === button));
       renderProducts();
@@ -288,4 +290,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderProducts();
   renderCart();
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
