@@ -1,7 +1,6 @@
 /*
  * Nhà Bé Học — cấu hình website
- * Để thêm/sửa sản phẩm, chỉnh mảng PRODUCTS bên dưới.
- * 20 trang tự động có giá gấp đôi 10 trang.
+ * Cập nhật: 10 trang = 15.000đ, 20 trang = 25.000đ (giảm 5.000đ)
  */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec"; // Dán URL Web App kết thúc bằng /exec tại đây.
 const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
@@ -29,8 +28,7 @@ const PRODUCTS = [
   { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", price10: 15000, icon: "⚖️" }
 ];
 
-const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const $ = (selector, root = document) => root.querySelector(selector); const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const money = n => new Intl.NumberFormat("vi-VN", {style:"currency",currency:"VND",maximumFractionDigits:0}).format(n);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 let activeCategory = "all";
@@ -56,7 +54,7 @@ function renderProducts() {
           <label>Số lượng trang
             <select class="page-select" aria-label="Số trang cho ${escapeHtml(p.name)}">
               <option value="10">10 trang — ${money(p.price10)}</option>
-              <option value="20">20 trang — ${money(p.price10 * 2)}</option>
+              <option value="20">20 trang — 25.000 đ</option>
             </select>
           </label>
           <label>Chủ đề minh họa
@@ -77,9 +75,16 @@ function addToCart(id, card) {
   const pages = Number($(".page-select", card).value);
   const theme = $(".theme-select", card).value;
   const key = `${id}|${pages}|${theme}`;
+  
+  // Tính giá: 10 trang = 15000đ, 20 trang = 25000đ cố định
+  let unitPrice = p.price10;
+  if (pages === 20) {
+    unitPrice = 25000;
+  }
+
   const found = cart.find(item => item.key === key);
   if (found) found.qty += 1;
-  else cart.push({key, id, name:p.name, category:p.category, image:p.image, icon:p.icon, pages, theme, unitPrice:p.price10 * pages / 10, qty:1});
+  else cart.push({key, id, name:p.name, category:p.category, image:p.image, icon:p.icon, pages, theme, unitPrice:unitPrice, qty:1});
   renderCart();
   openCart();
 }
@@ -159,64 +164,9 @@ async function submitOrder(event) {
   button.textContent = "Đang gửi đơn...";
   message.className = "form-message";
   try {
-    // Apps Script endpoint receives JSON as text/plain to avoid a CORS preflight.
     await fetch(GOOGLE_SCRIPT_URL, {
       method:"POST", mode:"no-cors", redirect:"follow",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify(order)
     });
-    // no-cors response is opaque; the browser cannot verify whether the Sheet saved it.
-    message.className = "form-message success";
-    message.textContent = `Đã gửi yêu cầu đặt hàng ${order.orderId}. Vì trình duyệt không đọc được phản hồi xác nhận, vui lòng chờ shop xác nhận đơn. Nếu bạn là chủ shop, hãy kiểm tra Google Sheets trước khi xử lý đơn.`;
-    cart = [];
-    renderCart();
-    form.reset();
-  } catch (error) {
-    message.className = "form-message error";
-    message.textContent = "Chưa gửi được đơn do lỗi kết nối. Vui lòng thử lại hoặc liên hệ shop.";
-  } finally {
-    orderBusy = false;
-    button.disabled = false;
-    button.innerHTML = 'Gửi đơn hàng <span>→</span>';
-  }
-}
-$("#productGrid").addEventListener("click", event => {
-  const button = event.target.closest("[data-add]");
-  if (button) addToCart(button.dataset.add, button.closest(".product-card"));
-});
-$("#categoryFilters").addEventListener("click", event => {
-  const button = event.target.closest("[data-category]");
-  if (!button) return;
-  activeCategory = button.dataset.category;
-  $$(".filter", $("#categoryFilters")).forEach(el => el.classList.toggle("active", el === button));
-  renderProducts();
-});
-$("#searchInput").addEventListener("input", renderProducts);
-$("#cartItems").addEventListener("click", event => {
-  const qtyButton = event.target.closest("[data-qty]");
-  const removeButton = event.target.closest("[data-remove]");
-  if (qtyButton) {
-    const item = cart.find(i => i.key === qtyButton.dataset.qty);
-    if (item) item.qty += Number(qtyButton.dataset.delta);
-    cart = cart.filter(i => i.qty > 0);
-    renderCart();
-  }
-  if (removeButton) {
-    cart = cart.filter(i => i.key !== removeButton.dataset.remove);
-    renderCart();
-  }
-});
-$("#openCart").addEventListener("click", openCart);
-$("#closeCart").addEventListener("click", closeCart);
-$("#overlay").addEventListener("click", closeCart);
-$("#continueShopping").addEventListener("click", closeCart);
-$("#goCheckout").addEventListener("click", openCheckout);
-$("#closeCheckout").addEventListener("click", closeCheckout);
-$("#checkoutModal").addEventListener("click", event => { if (event.target === $("#checkoutModal")) closeCheckout(); });
-$("#checkoutForm").addEventListener("submit", submitOrder);
-$("#menuToggle").addEventListener("click", () => $("#mainNav").classList.toggle("open"));
-$("#mainNav").addEventListener("click", event => { if (event.target.closest("a")) $("#mainNav").classList.remove("open"); });
-document.addEventListener("keydown", event => { if (event.key === "Escape") { closeCart(); closeCheckout(); } });
-$("#year").textContent = new Date().getFullYear();
-renderProducts();
-renderCart();
+    message.className = "form-message success
