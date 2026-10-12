@@ -1,8 +1,8 @@
 /*
  * Nhà Bé Học — cấu hình website
- * Cập nhật: 10 trang = 15.000đ, 20 trang = 25.000đ (giảm 5.000đ)
+ * Cập nhật: 10 trang = 15.000đ, 20 trang = 25.000đ
  */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec"; // Dán URL Web App kết thúc bằng /exec tại đây.
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec";
 const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
 const PRODUCTS = [
   { id: "to-mau-theo-hinh-mau", name: "Tô màu theo hình mẫu", category: "Sáng tạo", description: "Bé quan sát mẫu màu và tô theo gợi ý.", image: "images/to-mau-theo-hinh-mau.jpg", price10: 15000, icon: "🎨" },
@@ -38,11 +38,19 @@ let orderBusy = false;
 function productImageMarkup(p, extraClass = "") {
   return `<img class="${extraClass}" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')"><div class="image-fallback hidden"><span class="placeholder-icon">${escapeHtml(p.icon)}</span><strong>${escapeHtml(p.name)}</strong><small>Ảnh minh họa sẽ được cập nhật</small></div>`;
 }
+
 function renderProducts() {
-  const term = ($("#searchInput").value || "").trim().toLocaleLowerCase("vi");
+  const searchInput = $("#searchInput");
+  const grid = $("#productGrid");
+  const countEl = $("#productCount");
+  const emptyState = $("#emptyState");
+  if (!grid) return;
+
+  const term = (searchInput ? searchInput.value : "").trim().toLocaleLowerCase("vi");
   const shown = PRODUCTS.filter(p => (activeCategory === "all" || p.category === activeCategory) &&
     `${p.name} ${p.description} ${p.category}`.toLocaleLowerCase("vi").includes(term));
-  $("#productGrid").innerHTML = shown.map(p => `
+  
+  grid.innerHTML = shown.map(p => `
     <article class="product-card" data-product-id="${escapeHtml(p.id)}">
       <div class="product-image-wrap">${productImageMarkup(p,"product-image")}</div>
       <div class="product-card-body">
@@ -66,9 +74,11 @@ function renderProducts() {
         </div>
       </div>
     </article>`).join("");
-  $("#productCount").textContent = shown.length;
-  $("#emptyState").classList.toggle("hidden", shown.length > 0);
+  
+  if (countEl) countEl.textContent = shown.length;
+  if (emptyState) emptyState.classList.toggle("hidden", shown.length > 0);
 }
+
 function addToCart(id, card) {
   const p = PRODUCTS.find(item => item.id === id);
   if (!p) return;
@@ -87,48 +97,195 @@ function addToCart(id, card) {
   renderCart();
   openCart();
 }
+
 function cartTotal() { return cart.reduce((sum,item) => sum + item.unitPrice * item.qty, 0); }
+
 function renderCart() {
   const count = cart.reduce((sum,item) => sum + item.qty, 0);
-  $("#cartCount").textContent = count;
-  $("#drawerCount").textContent = `(${count})`;
-  $("#cartTotal").textContent = money(cartTotal());
-  $("#checkoutTotal").textContent = money(cartTotal());
-  $("#cartItems").innerHTML = cart.map(item => `
-    <article class="cart-item">
-      <div class="cart-thumb"><img src="${escapeHtml(item.image)}" alt="" onerror="this.style.display='none';this.parentElement.textContent='${escapeHtml(item.icon)}'"></div>
-      <div><h4>${escapeHtml(item.name)}</h4><small>${item.pages} trang · ${escapeHtml(item.theme)}</small>
-        <div class="cart-item-actions"><button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="-1" aria-label="Giảm số lượng">−</button><span>${item.qty}</span><button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="1" aria-label="Tăng số lượng">+</button><button class="remove-btn" data-remove="${escapeHtml(item.key)}">Xóa</button></div>
-      </div><strong>${money(item.unitPrice * item.qty)}</strong>
-    </article>`).join("");
-  $("#cartEmpty").classList.toggle("hidden", cart.length > 0);
-  $("#cartItems").classList.toggle("hidden", cart.length === 0);
-  $("#cartBottom").classList.toggle("hidden", cart.length === 0);
+  if ($("#cartCount")) $("#cartCount").textContent = count;
+  if ($("#drawerCount")) $("#drawerCount").textContent = `(${count})`;
+  if ($("#cartTotal")) $("#cartTotal").textContent = money(cartTotal());
+  if ($("#checkoutTotal")) $("#checkoutTotal").textContent = money(cartTotal());
+  
+  const cartItemsEl = $("#cartItems");
+  if (cartItemsEl) {
+    cartItemsEl.innerHTML = cart.map(item => `
+      <article class="cart-item">
+        <div class="cart-thumb"><img src="${escapeHtml(item.image)}" alt="" onerror="this.style.display='none';this.parentElement.textContent='${escapeHtml(item.icon)}'"></div>
+        <div><h4>${escapeHtml(item.name)}</h4><small>${item.pages} trang · ${escapeHtml(item.theme)}</small>
+          <div class="cart-item-actions"><button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="-1" aria-label="Giảm số lượng">−</button><span>${item.qty}</span><button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="1" aria-label="Tăng số lượng">+</button><button class="remove-btn" data-remove="${escapeHtml(item.key)}">Xóa</button></div>
+        </div><strong>${money(item.unitPrice * item.qty)}</strong>
+      </article>`).join("");
+  }
+  
+  if ($("#cartEmpty")) $("#cartEmpty").classList.toggle("hidden", cart.length > 0);
+  if ($("#cartItems")) $("#cartItems").classList.toggle("hidden", cart.length === 0);
+  if ($("#cartBottom")) $("#cartBottom").classList.toggle("hidden", cart.length === 0);
 }
+
 function openCart() {
-  $("#cartDrawer").classList.add("open");
-  $("#cartDrawer").setAttribute("aria-hidden","false");
-  $("#overlay").classList.remove("hidden");
+  const drawer = $("#cartDrawer");
+  if (drawer) {
+    drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden","false");
+  }
+  if ($("#overlay")) $("#overlay").classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
+
 function closeCart() {
-  $("#cartDrawer").classList.remove("open");
-  $("#cartDrawer").setAttribute("aria-hidden","true");
-  $("#overlay").classList.add("hidden");
+  const drawer = $("#cartDrawer");
+  if (drawer) {
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden","true");
+  }
+  if ($("#overlay")) $("#overlay").classList.add("hidden");
   document.body.style.overflow = "";
 }
+
 function openCheckout() {
   if (!cart.length) return;
   closeCart();
-  $("#formMessage").textContent = "";
-  $("#formMessage").className = "form-message";
-  $("#checkoutModal").classList.remove("hidden");
+  if ($("#formMessage")) {
+    $("#formMessage").textContent = "";
+    $("#formMessage").className = "form-message";
+  }
+  if ($("#checkoutModal")) $("#checkoutModal").classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
+
 function closeCheckout() {
-  $("#checkoutModal").classList.add("hidden");
+  if ($("#checkoutModal")) $("#checkoutModal").classList.add("hidden");
   document.body.style.overflow = "";
 }
+
 function buildOrder(form) {
   const fd = new FormData(form);
-  const order
+  const orderId = `NBH-${Date.now().toString().slice(-9)}`;
+  const items = cart.map(item => ({
+    productId:item.id, productName:item.name, category:item.category, pages:item.pages,
+    theme:item.theme, quantity:item.qty, unitPrice:item.unitPrice, subtotal:item.unitPrice*item.qty
+  }));
+  return {
+    orderId, createdAt:new Date().toISOString(),
+    customerName:String(fd.get("customerName") || "").trim(),
+    phone:String(fd.get("phone") || "").trim(),
+    address:String(fd.get("address") || "").trim(),
+    notes:String(fd.get("notes") || "").trim(),
+    items, itemSummary:items.map(i=>`${i.productName} (${i.pages} trang, ${i.theme}) x${i.quantity}`).join(" | "),
+    total:cartTotal(), currency:"VND", deliveryStatus:"Chưa giao", paymentStatus:"Chưa thu tiền"
+  };
+}
+
+async function submitOrder(event) {
+  event.preventDefault();
+  if (orderBusy || !cart.length) return;
+  const form = event.currentTarget;
+  const order = buildOrder(form);
+  const message = $("#formMessage");
+  const button = $("#submitOrder");
+  if (!GOOGLE_SCRIPT_URL.trim()) {
+    if (message) {
+      message.className = "form-message error";
+      message.textContent = "Website chưa được cấu hình Google Sheets.";
+    }
+    return;
+  }
+  orderBusy = true;
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Đang gửi đơn...";
+  }
+  if (message) message.className = "form-message";
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:"POST", mode:"no-cors", redirect:"follow",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(order)
+    });
+    if (message) {
+      message.className = "form-message success";
+      message.textContent = `🎉 Đặt hàng thành công! Mã đơn của bạn là: ${order.orderId}. Shop đã nhận được thông tin và sẽ chuẩn bị học liệu giao sớm nhất cho bé nhé!`;
+    }
+    cart = [];
+    renderCart();
+    form.reset();
+  } catch (error) {
+    if (message) {
+      message.className = "form-message error";
+      message.textContent = "Chưa gửi được đơn do lỗi kết nối. Vui lòng thử lại hoặc liên hệ shop.";
+    }
+  } finally {
+    orderBusy = false;
+    if (button) {
+      button.disabled = false;
+      button.innerHTML = 'Gửi đơn hàng <span>→</span>';
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const productGrid = $("#productGrid");
+  if (productGrid) {
+    productGrid.addEventListener("click", event => {
+      const button = event.target.closest("[data-add]");
+      if (button) addToCart(button.dataset.add, button.closest(".product-card"));
+    });
+  }
+
+  const categoryFilters = $("#categoryFilters");   if (categoryFilters) {     categoryFilters.addEventListener("click", event => {       const button = event.target.closest("[data-category]");       if (!button) return;       activeCategory = button.dataset.category;       $$(".filter", categoryFilters).forEach(el => el.classList.toggle("active", el === button));
+      renderProducts();
+    });
+  }
+
+  const searchInput = $("#searchInput");
+  if (searchInput) searchInput.addEventListener("input", renderProducts);
+
+  const cartItems = $("#cartItems");
+  if (cartItems) {
+    cartItems.addEventListener("click", event => {
+      const qtyButton = event.target.closest("[data-qty]");
+      const removeButton = event.target.closest("[data-remove]");
+      if (qtyButton) {
+        const item = cart.find(i => i.key === qtyButton.dataset.qty);
+        if (item) item.qty += Number(qtyButton.dataset.delta);
+        cart = cart.filter(i => i.qty > 0);
+        renderCart();
+      }
+      if (removeButton) {
+        cart = cart.filter(i => i.key !== removeButton.dataset.remove);
+        renderCart();
+      }
+    });
+  }
+
+  if ($("#openCart")) $("#openCart").addEventListener("click", openCart);
+  if ($("#closeCart")) $("#closeCart").addEventListener("click", closeCart);
+  if ($("#overlay")) $("#overlay").addEventListener("click", closeCart);
+  if ($("#continueShopping")) $("#continueShopping").addEventListener("click", closeCart);
+  if ($("#goCheckout")) $("#goCheckout").addEventListener("click", openCheckout);
+  if ($("#closeCheckout")) $("#closeCheckout").addEventListener("click", closeCheckout);
+  
+  const checkoutModal = $("#checkoutModal");
+  if (checkoutModal) {
+    checkoutModal.addEventListener("click", event => { if (event.target === checkoutModal) closeCheckout(); });
+  }
+
+  const checkoutForm = $("#checkoutForm");
+  if (checkoutForm) checkoutForm.addEventListener("submit", submitOrder);
+
+  const menuToggle = $("#menuToggle");
+  const mainNav = $("#mainNav");
+  if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", () => mainNav.classList.toggle("open"));
+    mainNav.addEventListener("click", event => { if (event.target.closest("a")) mainNav.classList.remove("open"); });
+  }
+
+  document.addEventListener("keydown", event => { if (event.key === "Escape") { closeCart(); closeCheckout(); } });
+  
+  const yearEl = $("#year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  renderProducts();
+  renderCart();
+});
