@@ -16,7 +16,7 @@ const PRODUCTS = [
   { id: "tap-dem-den-100", name: "Tập đếm đến 100", category: "Toán học", description: "Khám phá các số đến 100 theo cách dễ hiểu.", image: "images/tap-dem-den-100.jpg", price10: 15000, icon: "💯" },
   { id: "tap-cong-pham-vi-100", name: "Tập cộng phạm vi 100", category: "Toán học", description: "Bài tập cộng giúp bé rèn kỹ năng tính toán.", image: "images/tap-cong-pham-vi-100.jpg", price10: 15000, icon: "➕" },
   { id: "tap-tru-pham-vi-100", name: "Tập trừ phạm vi 100", category: "Toán học", description: "Thực hành phép trừ trong phạm vi 100.", image: "images/tap-tru-pham-vi-100.jpg", price10: 15000, icon: "➖" },
-  { id: "tap-viet-chu-cai-viet-nam", name: "Tập viết chữ cái Việt Nam", category: "Tập viết", description: "Làm quen và luyện viết chữ cái tiếng Việt.", image: "images/tap-viet-chu-cai-viet-nam.jpg", price10: 15000, icon: "🔤" },
+  { id: "lam-quen-chu-cai-viet-nam", name: "Làm quen chữ cái Việt Nam", category: "Tập viết", description: "Làm quen và luyện viết chữ cái tiếng Việt.", image: "images/lam-quen-chu-cai-viet-nam.jpg", price10: 15000, icon: "🔤" },
   { id: "tap-viet-chu-cai-tieng-anh", name: "Tập viết chữ cái tiếng Anh", category: "Tập viết", description: "Nhận diện và luyện viết chữ cái tiếng Anh.", image: "images/tap-viet-chu-cai-tieng-anh.jpg", price10: 15000, icon: "ABC" },
   { id: "tap-viet-so", name: "Tập viết số", category: "Tập viết", description: "Luyện nét và viết các chữ số.", image: "images/tap-viet-so.jpg", price10: 15000, icon: "✏️" },
   { id: "tu-duy-hinh-khoi", name: "Tư duy hình khối", category: "Tư duy", description: "Nhận diện hình dạng và rèn tư duy không gian.", image: "images/tu-duy-hinh-khoi.jpg", price10: 15000, icon: "🔷" },
