@@ -8,6 +8,15 @@ const PRODUCTS = [
   { id: "to-mau-theo-hinh-mau", name: "Tô màu theo hình mẫu", category: "Sáng tạo", description: "Bé quan sát mẫu màu và tô theo gợi ý.", image: "images/to-mau-theo-hinh-mau.jpg", price10: 15000, icon: "🎨" },
   { id: "to-mau-tu-do", name: "Tô màu tự do", category: "Sáng tạo", description: "Những bức tranh để bé thỏa sức sáng tạo.", image: "images/to-mau-tu-do.jpg", price10: 15000, icon: "🖍️" },
   { id: "tap-dem-1-10", name: "Tập đếm 1–10", category: "Toán học", description: "Làm quen số từ 1 đến 10 qua hình ảnh đáng yêu.", image: "images/tap-dem-1-10.jpg", price10: 15000, icon: "🔢" },
+  { 
+  id: "be-hoc-dem-va-viet-so", 
+  name: "Bé học đếm và viết số", 
+  category: "Toán học", 
+  description: "Làm quen với chữ số, thực hành đếm và tập viết nét số cơ bản.", 
+  image: "images/be-hoc-dem-va-viet-so.jpg", 
+  price10: 15000, 
+  icon: "✏️" 
+},
   { id: "tap-cong-pham-vi-10", name: "Tập cộng phạm vi 10", category: "Toán học", description: "Bước đầu làm quen với phép cộng.", image: "images/tap-cong-pham-vi-10.jpg", price10: 15000, icon: "➕" },
   { id: "tap-tru-pham-vi-10", name: "Tập trừ phạm vi 10", category: "Toán học", description: "Luyện tập phép trừ qua bài tập trực quan.", image: "images/tap-tru-pham-vi-10.jpg", price10: 15000, icon: "➖" },
   { id: "tap-dem-10-20", name: "Tập đếm 10–20", category: "Toán học", description: "Làm quen số từ 10 đến 20 qua hình ảnh.", image: "images/tap-dem-10-20.jpg", price10: 15000, icon: "🔟" },
