@@ -34,46 +34,46 @@ const PRODUCTS = [
   { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", type: "worksheet", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", icon: "images/so-sanh-so-lon-be.jpg" },
 
   // --- HỌC LIỆU NAM CHÂM & ROUTINE HÀNG NGÀY ---
-  { 
-    id: "bang-routine-hang-ngay", 
-    name: "Bảng Routine nếp sống hàng ngày", 
-    category: "Routine & Nam châm", 
-    type: "magnet",
-    description: "Bảng nam châm trực quan giúp bé tự giác thực hiện các hoạt động thức dậy, đánh răng, đi học, làm bài tập...", 
-    image: "images/bang-routine-hang-ngay.jpg", 
-    icon: "images/bang-routine-hang-ngay.jpg",
-    options: ["Bộ cơ bản (20 thẻ hoạt động)", "Bộ nâng cao (35 thẻ hoạt động)", "Bộ đầy đủ + Bảng treo nam châm"]
-  },
-  { 
-    id: "bo-nam-cham-chu-cai", 
-    name: "Bộ chữ cái tiếng Việt nam châm", 
-    category: "Routine & Nam châm", 
-    type: "magnet",
-    description: "Bộ chữ cái dán nam châm màu sắc rực rỡ, giúp bé ghép chữ trực quan trên bảng hoặc tủ lạnh.", 
-    image: "images/bo-nam-cham-chu-cai.jpg", 
-    icon: "images/bo-nam-cham-chu-cai.jpg",
-    options: ["Chữ thường (29 chữ cái)", "Chữ in hoa (29 chữ cái)", "Bộ đầy đủ (Chữ hoa + Chữ thường + Dấu)"]
-  },
-  { 
-    id: "bo-nam-cham-chu-so", 
-    name: "Bộ chữ số & phép tính nam châm", 
-    category: "Routine & Nam châm", 
-    type: "magnet",
-    description: "Các con số và dấu phép cộng, trừ, nhân, chia dán nam châm cho bé tập tính toán trực quan.", 
-    image: "images/bo-nam-cham-chu-so.jpg", 
-    icon: "images/bo-nam-cham-chu-so.jpg",
-    options: ["Bộ số 0-9 & Dấu phép tính", "Bộ đầy đủ (Số 0-20 & Dấu phép tính)"]
-  },
-  { 
-    id: "bo-the-hinh-anh-truc-quan", 
-    name: "Bộ thẻ hình ảnh trực quan (Visual Cards)", 
-    category: "Routine & Nam châm", 
-    type: "magnet",
-    description: "Thẻ hình ảnh cảm xúc, thời tiết, đồ vật, công việc hàng ngày gắn nam châm nhận biết trực quan.", 
-    image: "images/bo-the-hinh-anh-truc-quan.jpg", 
-    icon: "images/bo-the-hinh-anh-truc-quan.jpg",
-    options: ["Chủ đề Cảm xúc & Thời tiết", "Chủ đề Hoạt động gia đình", "Trọn bộ tổng hợp (50 thẻ)"]
-  }
+  //{ 
+  //  id: "bang-routine-hang-ngay", 
+  //  name: "Bảng Routine nếp sống hàng ngày", 
+   // category: "Routine & Nam châm", 
+  //  type: "magnet",
+   // description: "Bảng nam châm trực quan giúp bé tự giác thực hiện các hoạt động thức dậy, đánh răng, đi học, làm bài tập...", 
+   // image: "images/bang-routine-hang-ngay.jpg", 
+   // icon: "images/bang-routine-hang-ngay.jpg",
+  //  options: ["Bộ cơ bản (20 thẻ hoạt động)", "Bộ nâng cao (35 thẻ hoạt động)", "Bộ đầy đủ + Bảng treo nam châm"]
+//  },
+//  { 
+ //   id: "bo-nam-cham-chu-cai", 
+ //   name: "Bộ chữ cái tiếng Việt nam châm", 
+ //   category: "Routine & Nam châm", 
+ //   type: "magnet",
+ //   description: "Bộ chữ cái dán nam châm màu sắc rực rỡ, giúp bé ghép chữ trực quan trên bảng hoặc tủ lạnh.", 
+ //   image: "images/bo-nam-cham-chu-cai.jpg", 
+//    icon: "images/bo-nam-cham-chu-cai.jpg",
+ //   options: ["Chữ thường (29 chữ cái)", "Chữ in hoa (29 chữ cái)", "Bộ đầy đủ (Chữ hoa + Chữ thường + Dấu)"]
+ // },
+//  { 
+ //   id: "bo-nam-cham-chu-so", 
+  //  name: "Bộ chữ số & phép tính nam châm", 
+  //  category: "Routine & Nam châm", 
+  //  type: "magnet",
+  //  description: "Các con số và dấu phép cộng, trừ, nhân, chia dán nam châm cho bé tập tính toán trực quan.", 
+  //  image: "images/bo-nam-cham-chu-so.jpg", 
+  //  icon: "images/bo-nam-cham-chu-so.jpg",
+  //  options: ["Bộ số 0-9 & Dấu phép tính", "Bộ đầy đủ (Số 0-20 & Dấu phép tính)"]
+ // },
+ // { 
+  //  id: "bo-the-hinh-anh-truc-quan", 
+ //   name: "Bộ thẻ hình ảnh trực quan (Visual Cards)", 
+   // category: "Routine & Nam châm", 
+   // type: "magnet",
+  //  description: "Thẻ hình ảnh cảm xúc, thời tiết, đồ vật, công việc hàng ngày gắn nam châm nhận biết trực quan.", 
+  //  image: "images/bo-the-hinh-anh-truc-quan.jpg", 
+   // icon: "images/bo-the-hinh-anh-truc-quan.jpg",
+   // options: ["Chủ đề Cảm xúc & Thời tiết", "Chủ đề Hoạt động gia đình", "Trọn bộ tổng hợp (50 thẻ)"]
+//  }
 ];
 
 const $ = (selector, root = document) => root.querySelector(selector); const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
