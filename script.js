@@ -1,6 +1,5 @@
 /*
- * Nhà Bé Học — cấu hình website
- * Cập nhật: Tính tiền 1.500đ/trang, ẩn form sau khi gửi và hiển thị thông báo thành công/thất bại kèm SĐT hỗ trợ
+ * Học liệu thông minh — Cấu hình website & Xử lý đơn hàng
  */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec";
 const PAGE_OPTIONS = [5, 10, 15, 20];
@@ -56,30 +55,24 @@ function renderProducts() {
   const shown = PRODUCTS.filter(p => (activeCategory === "all" || p.category === activeCategory) &&
     `${p.name} ${p.description} ${p.category}`.toLocaleLowerCase("vi").includes(term));
   
-  grid.innerHTML = shown.map(p => {
-    let optionsHTML = `
-      <label>Số lượng trang
-        <select class="page-select" aria-label="Số trang cho ${escapeHtml(p.name)}">
-          ${PAGE_OPTIONS.map(pg => `<option value="${pg}">${pg} trang (${formatVND(pg * PRICE_PER_PAGE)})</option>`).join("")}
-        </select>
-      </label>
-    `;
-
-    return `
-      <article class="product-card" data-product-id="${escapeHtml(p.id)}">
-        <div class="product-image-wrap">${productImageMarkup(p,"product-image")}</div>
-        <div class="product-card-body">
-          <span class="product-category">${escapeHtml(p.category)}</span>
-          <h3>${escapeHtml(p.name)}</h3>
-          <p>${escapeHtml(p.description)}</p>
-          <div style="font-size:0.85rem; color:#e65100; font-weight:600; margin:6px 0;">Đơn giá: 1.500đ / trang</div>
-          <div class="product-options">
-            ${optionsHTML}
-            <button class="add-button" data-add="${escapeHtml(p.id)}">＋ Thêm vào giỏ hàng</button>
-          </div>
+  grid.innerHTML = shown.map(p => `
+    <article class="product-card" data-product-id="${escapeHtml(p.id)}">
+      <div class="product-image-wrap">${productImageMarkup(p,"product-image")}</div>
+      <div class="product-card-body">
+        <span class="product-category">${escapeHtml(p.category)}</span>
+        <h3>${escapeHtml(p.name)}</h3>
+        <p>${escapeHtml(p.description)}</p>
+        <div style="font-size:0.85rem; color:#e65100; font-weight:600; margin:6px 0;">Đơn giá: 1.500đ / trang</div>
+        <div class="product-options">
+          <label>Số lượng trang
+            <select class="page-select" aria-label="Số trang cho ${escapeHtml(p.name)}">
+              ${PAGE_OPTIONS.map(pg => `<option value="${pg}">${pg} trang (${formatVND(pg * PRICE_PER_PAGE)})</option>`).join("")}
+            </select>
+          </label>
+          <button class="add-button" data-add="${escapeHtml(p.id)}">＋ Thêm vào giỏ hàng</button>
         </div>
-      </article>`;
-  }).join("");
+      </div>
+    </article>`).join("");
   
   if (countEl) countEl.textContent = shown.length;
   if (emptyState) emptyState.classList.toggle("hidden", shown.length > 0);
@@ -118,7 +111,7 @@ function calculateCartTotal() {
 
 function renderCart() {
   const count = cart.reduce((sum,item) => sum + item.qty, 0);
-  if ($("#cartCount")) $("#cartCountent") ? $("#cartCountent").textContent = count : $("#cartCount").textContent = count;
+  if ($("#cartCount")) $("#cartCount").textContent = count;
   if ($("#drawerCount")) $("#drawerCount").textContent = `(${count})`;
   
   const totalMoney = calculateCartTotal();
@@ -153,13 +146,14 @@ function renderCart() {
   }
   if (cartSummary) {
     cartSummary.innerHTML = `
-      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1rem; color:#2e7d32; margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1rem; color:#2e7d32; margin-bottom:10px; padding-top: 5px;">
         <span>Tổng cộng:</span>
         <span>${formatVND(totalMoney)}</span>
       </div>
     `;
   }
 
+  if ($("#checkoutTotal")) $("#checkoutTotal").textContent = formatVND(totalMoney);
   if ($("#cartEmpty")) $("#cartEmpty").classList.toggle("hidden", cart.length > 0);
   if ($("#cartItems")) $("#cartItems").classList.toggle("hidden", cart.length === 0);
   if ($("#cartBottom")) $("#cartBottom").classList.toggle("hidden", cart.length === 0);
@@ -189,14 +183,12 @@ function openCheckout() {
   if (!cart.length) return;
   closeCart();
   
-  // Đảm bảo hiện lại form và ẩn màn hình thông báo cũ khi mở modal
-  const formWrap = $("#checkoutForm") \vert{}\vert{} $("#checkoutFormWrap");
-  if (formWrap) {
-    formWrap.style.display = "block";
-    formWrap.reset ? formWrap.reset() : null;
-  }
-  const successBox = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
-  if (successBox) successBox.classList.add("hidden");
+  // Hiển thị lại form và ẩn màn hình thông báo cũ khi mở modal mới
+  const checkoutForm = $("#checkoutForm");
+  if (checkoutForm) checkoutForm.style.display = "block";
+
+  const successScreen = $("#successScreen");
+  if (successScreen) successScreen.classList.add("hidden");
 
   if ($("#checkoutModal")) $("#checkoutModal").classList.remove("hidden");
   document.body.style.overflow = "hidden";
@@ -264,18 +256,15 @@ async function submitOrder(event) {
       body: JSON.stringify(order)
     });
 
-    // --- 1. TỰ ĐỘNG TẮT KHUNG NHẬP THÔNG TIN ---
+    // 1. Tự động TẮT form nhập thông tin
     if (form) form.style.display = "none";
-    let formWrap = $("#checkoutFormWrap");
-    if (formWrap) formWrap.style.display = "none";
 
-    // --- 2. HIỂN THỊ MÀN HÌNH THÔNG BÁO HOÀN THÀNH ---
-    let successScreen = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
+    // 2. Hiển thị màn hình THÀNH CÔNG
+    let successScreen = $("#successScreen");
     if (!successScreen) {
       successScreen = document.createElement("div");
       successScreen.id = "successScreen";
-      successScreen.className = "success-screen";
-      const modalContent = $(".checkout-modal") \vert{}\vert{} $(".modal-wrap");
+      const modalContent = $(".checkout-modal");
       if (modalContent) modalContent.appendChild(successScreen);
     }
 
@@ -285,7 +274,10 @@ async function submitOrder(event) {
       <div style="text-align: center; padding: 20px 10px;">
         <div style="font-size: 3.5rem; margin-bottom: 10px;">🎉</div>
         <h2 style="color: #2e7d32; font-size: 1.5rem; font-weight: bold; margin-bottom: 8px;">ĐẶT HÀNG THÀNH CÔNG!</h2>
-        <p style="font-size: 1rem; color: #444; margin-bottom: 12px;">Đơn hàng mã <strong style="color: #d32f2f;">${order.orderId}</strong> đã hoàn thành. Khách hàng vui lòng chờ giao hàng trong <strong>1-2 ngày</strong> tới nhé!</p>
+        <p style="font-size: 1rem; color: #444; margin-bottom: 15px; line-height: 1.5;">
+          Đơn hàng mã <strong style="color: #d32f2f;">${order.orderId}</strong> đã hoàn thành.<br>
+          Khách hàng vui lòng chờ giao hàng trong <strong>1-2 ngày</strong> tới nhé!
+        </p>
         
         <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; text-align: left; border: 1px solid #e0e0e0; font-size: 0.9rem; margin-bottom: 15px;">
           <p><strong>Người nhận:</strong> ${escapeHtml(order.customerName)}</p>
@@ -303,17 +295,16 @@ async function submitOrder(event) {
     form.reset();
 
   } catch (error) {
-    // --- XỬ LÝ KHI GỬI THẤT BẠI ---
-    let successScreen = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
+    // 3. Xử lý khi lỗi kết nối / gửi thất bại
+    if (form) form.style.display = "none";
+    let successScreen = $("#successScreen");
     if (!successScreen) {
       successScreen = document.createElement("div");
       successScreen.id = "successScreen";
-      successScreen.className = "success-screen";
-      const modalContent = $(".checkout-modal") \vert{}\vert{} $(".modal-wrap");
+      const modalContent = $(".checkout-modal");
       if (modalContent) modalContent.appendChild(successScreen);
     }
 
-    if (form) form.style.display = "none";
     successScreen.classList.remove("hidden");
     successScreen.style.display = "block";
     successScreen.innerHTML = `
@@ -322,7 +313,7 @@ async function submitOrder(event) {
         <h2 style="color: #d32f2f; font-size: 1.4rem; font-weight: bold; margin-bottom: 8px;">GỬI ĐƠN CHƯA THÀNH CÔNG</h2>
         <p style="font-size: 1rem; color: #444; margin-bottom: 15px; line-height: 1.5;">
           Do lỗi kết nối, hệ thống chưa ghi nhận được đơn hàng tự động.<br>
-          Quý khách vui lòng liên hệ trực tiếp số điện thoại <a href="tel:0949648329" style="color: #e65100; font-weight: bold; text-decoration: underline;">0949.648.329</a> để đặt hàng nhanh chóng nhé!
+          Quý khách vui lòng liên hệ trực tiếp số điện thoại <a href="tel:0949648329" style="color: #e65100; font-weight: bold; text-decoration: underline;">0949.648.329</a> để được hỗ trợ đặt hàng nhanh chóng nhé!
         </p>
         <button onclick="closeCheckout()" class="button primary" style="padding: 10px 25px; border-radius: 20px; cursor: pointer;">Đóng cửa sổ</button>
       </div>
