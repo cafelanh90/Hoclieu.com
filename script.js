@@ -119,11 +119,11 @@ function renderProducts() {
             ${PAGE_OPTIONS.map(pg => `<option value="${pg}">${pg} trang</option>`).join("")}
           </select>
         </label>
-        <label>Chủ đề minh họa
-          <select class="theme-select" aria-label="Chủ đề minh họa cho ${escapeHtml(p.name)}">
-            ${THEMES.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
-          </select>
-        </label>
+      //  <label>Chủ đề minh họa
+       //   <select class="theme-select" aria-label="Chủ đề minh họa cho ${escapeHtml(p.name)}">
+       //     ${THEMES.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("")}
+       //   </select>
+      //  </label>
       `;
     }
 
@@ -319,7 +319,7 @@ async function submitOrder(event) {
   } catch (error) {
     if (message) {
       message.className = "form-message error";
-      message.textContent = "Chưa gửi được đơn do lỗi kết nối. Vui lòng thử lại hoặc liên hệ shop.";
+      message.textContent = "Chưa gửi được đơn do lỗi kết nối. Vui lòng thử lại hoặc liên hệ shop. Số Điện thoại: 0949.648.329.";
     }
   } finally {
     orderBusy = false;
