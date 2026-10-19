@@ -230,3 +230,175 @@ function buildOrder(form) {
     notes: String(fd.get("notes") || "").trim(),
     items, 
     itemSummary: items.map(i => `${i.productName} (${i.pages} trang) x${i.quantity}`).join(" | "),
+    total: formatVND(totalMoney),
+    deliveryStatus: "Chưa giao", 
+    paymentStatus: "Chưa thu tiền"
+  };
+}
+
+async function submitOrder(event) {
+  event.preventDefault();
+  if (orderBusy || !cart.length) return;
+
+  const form = event.currentTarget;
+  const order = buildOrder(form);
+  const button = $("#submitOrder");
+  
+  if (!GOOGLE_SCRIPT_URL.trim()) {
+    alert("Website chưa được cấu hình Google Sheets.");
+    return;
+  }
+
+  orderBusy = true;
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Đang gửi đơn...";
+  }
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST", 
+      mode: "no-cors", 
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(order)
+    });
+
+    // --- 1. TỰ ĐỘNG TẮT KHUNG NHẬP THÔNG TIN ---
+    if (form) form.style.display = "none";
+    let formWrap = $("#checkoutFormWrap");
+    if (formWrap) formWrap.style.display = "none";
+
+    // --- 2. HIỂN THỊ MÀN HÌNH THÔNG BÁO HOÀN THÀNH ---
+    let successScreen = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
+    if (!successScreen) {
+      successScreen = document.createElement("div");
+      successScreen.id = "successScreen";
+      successScreen.className = "success-screen";
+      const modalContent = $(".checkout-modal") \vert{}\vert{} $(".modal-wrap");
+      if (modalContent) modalContent.appendChild(successScreen);
+    }
+
+    successScreen.classList.remove("hidden");
+    successScreen.style.display = "block";
+    successScreen.innerHTML = `
+      <div style="text-align: center; padding: 20px 10px;">
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">🎉</div>
+        <h2 style="color: #2e7d32; font-size: 1.5rem; font-weight: bold; margin-bottom: 8px;">ĐẶT HÀNG THÀNH CÔNG!</h2>
+        <p style="font-size: 1rem; color: #444; margin-bottom: 12px;">Đơn hàng mã <strong style="color: #d32f2f;">${order.orderId}</strong> đã hoàn thành. Khách hàng vui lòng chờ giao hàng trong <strong>1-2 ngày</strong> tới nhé!</p>
+        
+        <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; text-align: left; border: 1px solid #e0e0e0; font-size: 0.9rem; margin-bottom: 15px;">
+          <p><strong>Người nhận:</strong> ${escapeHtml(order.customerName)}</p>
+          <p><strong>Số điện thoại:</strong> ${escapeHtml(order.phone)}</p>
+          <p><strong>Địa chỉ:</strong> ${escapeHtml(order.address)}</p>
+          <p><strong>Tổng tiền:</strong> <span style="color: #2e7d32; font-weight: bold;">${order.total}</span></p>
+        </div>
+
+        <button onclick="closeCheckout()" class="button primary" style="padding: 10px 25px; border-radius: 20px; cursor: pointer;">Đóng cửa sổ</button>
+      </div>
+    `;
+
+    cart = [];
+    renderCart();
+    form.reset();
+
+  } catch (error) {
+    // --- XỬ LÝ KHI GỬI THẤT BẠI ---
+    let successScreen = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
+    if (!successScreen) {
+      successScreen = document.createElement("div");
+      successScreen.id = "successScreen";
+      successScreen.className = "success-screen";
+      const modalContent = $(".checkout-modal") \vert{}\vert{} $(".modal-wrap");
+      if (modalContent) modalContent.appendChild(successScreen);
+    }
+
+    if (form) form.style.display = "none";
+    successScreen.classList.remove("hidden");
+    successScreen.style.display = "block";
+    successScreen.innerHTML = `
+      <div style="text-align: center; padding: 20px 10px;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div>
+        <h2 style="color: #d32f2f; font-size: 1.4rem; font-weight: bold; margin-bottom: 8px;">GỬI ĐƠN CHƯA THÀNH CÔNG</h2>
+        <p style="font-size: 1rem; color: #444; margin-bottom: 15px; line-height: 1.5;">
+          Do lỗi kết nối, hệ thống chưa ghi nhận được đơn hàng tự động.<br>
+          Quý khách vui lòng liên hệ trực tiếp số điện thoại <a href="tel:0949648329" style="color: #e65100; font-weight: bold; text-decoration: underline;">0949.648.329</a> để đặt hàng nhanh chóng nhé!
+        </p>
+        <button onclick="closeCheckout()" class="button primary" style="padding: 10px 25px; border-radius: 20px; cursor: pointer;">Đóng cửa sổ</button>
+      </div>
+    `;
+  } finally {
+    orderBusy = false;
+    if (button) {
+      button.disabled = false;
+      button.innerHTML = 'Gửi đơn hàng <span>→</span>';
+    }
+  }
+}
+
+function initApp() {
+  const productGrid = $("#productGrid");
+  if (!productGrid) return;
+
+  productGrid.addEventListener("click", event => {
+    const button = event.target.closest("[data-add]");
+    if (button) addToCart(button.dataset.add, button.closest(".product-card"));
+  });
+
+  const searchInput = $("#searchInput");
+  if (searchInput) searchInput.addEventListener("input", renderProducts);
+
+  const cartItems = $("#cartItems");
+  if (cartItems) {
+    cartItems.addEventListener("click", event => {
+      const qtyButton = event.target.closest("[data-qty]");
+      const removeButton = event.target.closest("[data-remove]");
+      if (qtyButton) {
+        const item = cart.find(i => i.key === qtyButton.dataset.qty);
+        if (item) item.qty += Number(qtyButton.dataset.delta);
+        cart = cart.filter(i => i.qty > 0);
+        renderCart();
+      }
+      if (removeButton) {
+        cart = cart.filter(i => i.key !== removeButton.dataset.remove);
+        renderCart();
+      }
+    });
+  }
+
+  if ($("#openCart")) $("#openCart").addEventListener("click", openCart);
+  if ($("#closeCart")) $("#closeCart").addEventListener("click", closeCart);
+  if ($("#overlay")) $("#overlay").addEventListener("click", closeCart);
+  if ($("#continueShopping")) $("#continueShopping").addEventListener("click", closeCart);
+  if ($("#goCheckout")) $("#goCheckout").addEventListener("click", openCheckout);
+  if ($("#closeCheckout")) $("#closeCheckout").addEventListener("click", closeCheckout);
+  
+  const checkoutModal = $("#checkoutModal");
+  if (checkoutModal) {
+    checkoutModal.addEventListener("click", event => { if (event.target === checkoutModal) closeCheckout(); });
+  }
+
+  const checkoutForm = $("#checkoutForm");
+  if (checkoutForm) checkoutForm.addEventListener("submit", submitOrder);
+
+  const menuToggle = $("#menuToggle");
+  const mainNav = $("#mainNav");
+  if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", () => mainNav.classList.toggle("open"));
+    mainNav.addEventListener("click", event => { if (event.target.closest("a")) mainNav.classList.remove("open"); });
+  }
+
+  document.addEventListener("keydown", event => { if (event.key === "Escape") { closeCart(); closeCheckout(); } });
+  
+  const yearEl = $("#year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  renderProducts();
+  renderCart();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
