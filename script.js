@@ -1,9 +1,10 @@
 /*
  * Nhà Bé Học — cấu hình website
- * Cập nhật: Mở rộng bán Worksheet & Học liệu Nam châm / Routine cho bé
+ * Cập nhật: Tính tiền 1.500đ/trang, ẩn form sau khi gửi và hiển thị thông báo thành công/thất bại kèm SĐT hỗ trợ
  */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec";
 const PAGE_OPTIONS = [5, 10, 15, 20];
+const PRICE_PER_PAGE = 1500; // Đơn giá 1.500đ / trang
 
 const PRODUCTS = [
   // --- WORKSHEET / TRANG IN ---
@@ -33,6 +34,7 @@ const PRODUCTS = [
 
 const $ = (selector, root = document) => root.querySelector(selector); const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const formatVND = num => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(num);
 
 let activeCategory = "all";
 let cart = [];
@@ -55,27 +57,13 @@ function renderProducts() {
     `${p.name} ${p.description} ${p.category}`.toLocaleLowerCase("vi").includes(term));
   
   grid.innerHTML = shown.map(p => {
-    let optionsHTML = "";
-    
-    if (p.type === "magnet") {
-      // Tùy chọn cho Học liệu Nam châm / Routine
-      optionsHTML = `
-        <label>Phân loại / Gói học liệu
-          <select class="variant-select" aria-label="Gói học liệu cho ${escapeHtml(p.name)}">
-            ${(p.options || []).map(opt => `<option value="${escapeHtml(opt)}">${escapeHtml(opt)}</option>`).join("")}
-          </select>
-        </label>
-      `;
-    } else {
-      // Tùy chọn cho Worksheet / Trang in
-      optionsHTML = `
-        <label>Số lượng trang
-          <select class="page-select" aria-label="Số trang cho ${escapeHtml(p.name)}">
-            ${PAGE_OPTIONS.map(pg => `<option value="${pg}">${pg} trang</option>`).join("")}
-          </select>
-        </label>
-      `;
-    }
+    let optionsHTML = `
+      <label>Số lượng trang
+        <select class="page-select" aria-label="Số trang cho ${escapeHtml(p.name)}">
+          ${PAGE_OPTIONS.map(pg => `<option value="${pg}">${pg} trang (${formatVND(pg * PRICE_PER_PAGE)})</option>`).join("")}
+        </select>
+      </label>
+    `;
 
     return `
       <article class="product-card" data-product-id="${escapeHtml(p.id)}">
@@ -84,6 +72,7 @@ function renderProducts() {
           <span class="product-category">${escapeHtml(p.category)}</span>
           <h3>${escapeHtml(p.name)}</h3>
           <p>${escapeHtml(p.description)}</p>
+          <div style="font-size:0.85rem; color:#e65100; font-weight:600; margin:6px 0;">Đơn giá: 1.500đ / trang</div>
           <div class="product-options">
             ${optionsHTML}
             <button class="add-button" data-add="${escapeHtml(p.id)}">＋ Thêm vào giỏ hàng</button>
@@ -100,69 +89,77 @@ function addToCart(id, card) {
   const p = PRODUCTS.find(item => item.id === id);
   if (!p) return;
 
-  let key = "";
-  let itemData = {
-    id: p.id,
-    name: p.name,
-    category: p.category,
-    type: p.type,
-    image: p.image,
-    icon: p.icon,
-    qty: 1
-  };
-
-  if (p.type === "magnet") {
-    const variant = $(".variant-select", card) ? $(".variant-select", card).value : "Mặc định";
-    key = `${id}|${variant}`;
-    itemData.variant = variant;
-  } else {
-    const pages = Number($(".page-select", card).value);
-    key = `${id}|${pages}`;
-    itemData.pages = pages;
-  }
-
-  itemData.key = key;
+  const pages = Number($(".page-select", card).value);
+  const key = `${id}|${pages}`;
 
   const found = cart.find(item => item.key === key);
   if (found) {
     found.qty += 1;
   } else {
-    cart.push(itemData);
+    cart.push({
+      key,
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      image: p.image,
+      icon: p.icon,
+      pages,
+      qty: 1
+    });
   }
 
   renderCart();
   openCart();
 }
 
+function calculateCartTotal() {
+  return cart.reduce((sum, item) => sum + (item.pages * item.qty * PRICE_PER_PAGE), 0);
+}
+
 function renderCart() {
   const count = cart.reduce((sum,item) => sum + item.qty, 0);
-  if ($("#cartCount")) $("#cartCount").textContent = count;
+  if ($("#cartCount")) $("#cartCountent") ? $("#cartCountent").textContent = count : $("#cartCount").textContent = count;
   if ($("#drawerCount")) $("#drawerCount").textContent = `(${count})`;
   
+  const totalMoney = calculateCartTotal();
   const cartItemsEl = $("#cartItems");
+  
   if (cartItemsEl) {
     cartItemsEl.innerHTML = cart.map(item => {
-      let subInfo = item.type === "magnet" 
-        ? `${escapeHtml(item.variant)}`
-        : `${item.pages} trang`;
-
+      const itemSubtotal = item.pages * item.qty * PRICE_PER_PAGE;
       return `
         <article class="cart-item">
           <div class="cart-thumb"><img src="${escapeHtml(item.image)}" alt="" onerror="this.src='${escapeHtml(item.icon)}'"></div>
-          <div>
+          <div style="flex:1;">
             <h4>${escapeHtml(item.name)}</h4>
-            <small>${subInfo}</small>
+            <small>${item.pages} trang · ${formatVND(item.pages * PRICE_PER_PAGE)}/bộ</small>
             <div class="cart-item-actions">
-              <button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="-1" aria-label="Giảm số lượng">−</button>
+              <button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="-1" aria-label="Giảm">−</button>
               <span>${item.qty}</span>
-              <button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="1" aria-label="Tăng số lượng">+</button>
+              <button class="qty-btn" data-qty="${escapeHtml(item.key)}" data-delta="1" aria-label="Tăng">+</button>
               <button class="remove-btn" data-remove="${escapeHtml(item.key)}">Xóa</button>
             </div>
           </div>
+          <div style="font-weight:bold; font-size:0.9rem;">${formatVND(itemSubtotal)}</div>
         </article>`;
     }).join("");
   }
-  
+
+  let cartSummary = $("#cartSummary");
+  if (!cartSummary && $("#cartBottom")) {
+    cartSummary = document.createElement("div");
+    cartSummary.id = "cartSummary";
+    $("#cartBottom").prepend(cartSummary);
+  }
+  if (cartSummary) {
+    cartSummary.innerHTML = `
+      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1rem; color:#2e7d32; margin-bottom:10px;">
+        <span>Tổng cộng:</span>
+        <span>${formatVND(totalMoney)}</span>
+      </div>
+    `;
+  }
+
   if ($("#cartEmpty")) $("#cartEmpty").classList.toggle("hidden", cart.length > 0);
   if ($("#cartItems")) $("#cartItems").classList.toggle("hidden", cart.length === 0);
   if ($("#cartBottom")) $("#cartBottom").classList.toggle("hidden", cart.length === 0);
@@ -191,10 +188,16 @@ function closeCart() {
 function openCheckout() {
   if (!cart.length) return;
   closeCart();
-  if ($("#formMessage")) {
-    $("#formMessage").textContent = "";
-    $("#formMessage").className = "form-message";
+  
+  // Đảm bảo hiện lại form và ẩn màn hình thông báo cũ khi mở modal
+  const formWrap = $("#checkoutForm") \vert{}\vert{} $("#checkoutFormWrap");
+  if (formWrap) {
+    formWrap.style.display = "block";
+    formWrap.reset ? formWrap.reset() : null;
   }
+  const successBox = $("#successScreen") \vert{}\vert{} $("#orderSuccessBox");
+  if (successBox) successBox.classList.add("hidden");
+
   if ($("#checkoutModal")) $("#checkoutModal").classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
@@ -207,14 +210,17 @@ function closeCheckout() {
 function buildOrder(form) {
   const fd = new FormData(form);
   const orderId = `NBH-${Date.now().toString().slice(-9)}`;
+  const totalMoney = calculateCartTotal();
+
   const items = cart.map(item => ({
     productId: item.id, 
     productName: item.name, 
     category: item.category, 
-    type: item.type,
-    details: item.type === "magnet" ? item.variant : `${item.pages} trang`,
+    pages: item.pages,
+    subtotal: item.pages * item.qty * PRICE_PER_PAGE,
     quantity: item.qty
   }));
+
   return {
     orderId, 
     createdAt: new Date().toISOString(),
@@ -223,129 +229,4 @@ function buildOrder(form) {
     address: String(fd.get("address") || "").trim(),
     notes: String(fd.get("notes") || "").trim(),
     items, 
-    itemSummary: items.map(i => `${i.productName} [${i.details}] x${i.quantity}`).join(" | "),
-    deliveryStatus: "Chưa giao", 
-    paymentStatus: "Chưa thu tiền"
-  };
-}
-
-async function submitOrder(event) {
-  event.preventDefault();
-  if (orderBusy || !cart.length) return;
-  const form = event.currentTarget;
-  const order = buildOrder(form);
-  const message = $("#formMessage");
-  const button = $("#submitOrder");
-  if (!GOOGLE_SCRIPT_URL.trim()) {
-    if (message) {
-      message.className = "form-message error";
-      message.textContent = "Website chưa được cấu hình Google Sheets.";
-    }
-    return;
-  }
-  orderBusy = true;
-  if (button) {
-    button.disabled = true;
-    button.textContent = "Đang gửi đơn...";
-  }
-  if (message) message.className = "form-message";
-  try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST", 
-      mode: "no-cors", 
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(order)
-    });
-    if (message) {
-      message.className = "form-message success";
-      message.textContent = `🎉 Đặt hàng thành công! Mã đơn của bạn là: ${order.orderId}. Shop đã nhận được thông tin và sẽ chuẩn bị học liệu giao sớm nhất cho bé nhé!`;
-    }
-    cart = [];
-    renderCart();
-    form.reset();
-  } catch (error) {
-    if (message) {
-      message.className = "form-message error";
-      message.textContent = "Chưa gửi được đơn do lỗi kết nối. Vui lòng thử lại hoặc liên hệ shop. Số Điện thoại: 0949.648.329.";
-    }
-  } finally {
-    orderBusy = false;
-    if (button) {
-      button.disabled = false;
-      button.innerHTML = 'Gửi đơn hàng <span>→</span>';
-    }
-  }
-}
-
-function initApp() {
-  const productGrid = $("#productGrid");
-  if (!productGrid) return;
-
-  productGrid.addEventListener("click", event => {
-    const button = event.target.closest("[data-add]");
-    if (button) addToCart(button.dataset.add, button.closest(".product-card"));
-  });
-
-  const categoryFilters = $("#categoryFilters"); if (categoryFilters) { categoryFilters.addEventListener("click", event => { const button = event.target.closest("[data-category]"); if (!button) return; activeCategory = button.dataset.category; $$(".filter", categoryFilters).forEach(el => el.classList.toggle("active", el === button));
-      renderProducts();
-    });
-  }
-
-  const searchInput = $("#searchInput");
-  if (searchInput) searchInput.addEventListener("input", renderProducts);
-
-  const cartItems = $("#cartItems");
-  if (cartItems) {
-    cartItems.addEventListener("click", event => {
-      const qtyButton = event.target.closest("[data-qty]");
-      const removeButton = event.target.closest("[data-remove]");
-      if (qtyButton) {
-        const item = cart.find(i => i.key === qtyButton.dataset.qty);
-        if (item) item.qty += Number(qtyButton.dataset.delta);
-        cart = cart.filter(i => i.qty > 0);
-        renderCart();
-      }
-      if (removeButton) {
-        cart = cart.filter(i => i.key !== removeButton.dataset.remove);
-        renderCart();
-      }
-    });
-  }
-
-  if ($("#openCart")) $("#openCart").addEventListener("click", openCart);
-  if ($("#closeCart")) $("#closeCart").addEventListener("click", closeCart);
-  if ($("#overlay")) $("#overlay").addEventListener("click", closeCart);
-  if ($("#continueShopping")) $("#continueShopping").addEventListener("click", closeCart);
-  if ($("#goCheckout")) $("#goCheckout").addEventListener("click", openCheckout);
-  if ($("#closeCheckout")) $("#closeCheckout").addEventListener("click", closeCheckout);
-  
-  const checkoutModal = $("#checkoutModal");
-  if (checkoutModal) {
-    checkoutModal.addEventListener("click", event => { if (event.target === checkoutModal) closeCheckout(); });
-  }
-
-  const checkoutForm = $("#checkoutForm");
-  if (checkoutForm) checkoutForm.addEventListener("submit", submitOrder);
-
-  const menuToggle = $("#menuToggle");
-  const mainNav = $("#mainNav");
-  if (menuToggle && mainNav) {
-    menuToggle.addEventListener("click", () => mainNav.classList.toggle("open"));
-    mainNav.addEventListener("click", event => { if (event.target.closest("a")) mainNav.classList.remove("open"); });
-  }
-
-  document.addEventListener("keydown", event => { if (event.key === "Escape") { closeCart(); closeCheckout(); } });
-  
-  const yearEl = $("#year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  renderProducts();
-  renderCart();
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initApp);
-} else {
-  initApp();
-}
+    itemSummary: items.map(i => `${i.productName} (${i.pages} trang) x${i.quantity}`).join(" | "),
