@@ -3,7 +3,7 @@
  * Cập nhật: Mở rộng bán Worksheet & Học liệu Nam châm / Routine cho bé
  */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec";
-const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
+//const THEMES = ["Con Vật", "Công Chúa", "Bánh Kẹo", "Kem", "Phương tiện giao thông", "Mix nhiều chủ đề"];
 const PAGE_OPTIONS = [5, 10, 15, 20];
 
 const PRODUCTS = [
