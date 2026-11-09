@@ -1,5 +1,5 @@
 /*
- * Học liệu thông minh — Cấu hình website & Xử lý đơn hàng
+ * Nhà Bé Học — cấu hình website & Xử lý đơn hàng
  */
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztOhIx_AbRT4IFpaf08V559fo6geFjbbgVae1YNXCjkK1h-xoKD2iYjyDloCKKDfIP/exec";
 const PAGE_OPTIONS = [5, 10, 15, 20];
@@ -31,7 +31,8 @@ const PRODUCTS = [
   { id: "so-sanh-so-lon-be", name: "So sánh số lớn, số bé", category: "Toán học", type: "worksheet", description: "Luyện so sánh và sắp xếp các số.", image: "images/so-sanh-so-lon-be.jpg", icon: "images/so-sanh-so-lon-be.jpg" }
 ];
 
-const $ = (selector, root = document) => root.querySelector(selector); const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 const formatVND = num => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(num);
 
@@ -183,7 +184,6 @@ function openCheckout() {
   if (!cart.length) return;
   closeCart();
   
-  // Hiển thị lại form và ẩn màn hình thông báo cũ khi mở modal mới
   const checkoutForm = $("#checkoutForm");
   if (checkoutForm) checkoutForm.style.display = "block";
 
@@ -203,6 +203,7 @@ function buildOrder(form) {
   const fd = new FormData(form);
   const orderId = `NBH-${Date.now().toString().slice(-9)}`;
   const totalMoney = calculateCartTotal();
+  const totalPages = cart.reduce((sum, item) => sum + (item.pages * item.qty), 0);
 
   const items = cart.map(item => ({
     productId: item.id, 
@@ -222,7 +223,9 @@ function buildOrder(form) {
     notes: String(fd.get("notes") || "").trim(),
     items, 
     itemSummary: items.map(i => `${i.productName} (${i.pages} trang) x${i.quantity}`).join(" | "),
-    total: formatVND(totalMoney),
+    totalPages: totalPages,              // Số trang dạng số để sheet tính toán
+    totalAmount: totalMoney,             // Tổng tiền dạng số nguyên để Excel tính tổng
+    total: formatVND(totalMoney),        // Chuỗi định dạng hiển thị
     deliveryStatus: "Chưa giao", 
     paymentStatus: "Chưa thu tiền"
   };
@@ -256,10 +259,8 @@ async function submitOrder(event) {
       body: JSON.stringify(order)
     });
 
-    // 1. Tự động TẮT form nhập thông tin
     if (form) form.style.display = "none";
 
-    // 2. Hiển thị màn hình THÀNH CÔNG
     let successScreen = $("#successScreen");
     if (!successScreen) {
       successScreen = document.createElement("div");
@@ -295,7 +296,6 @@ async function submitOrder(event) {
     form.reset();
 
   } catch (error) {
-    // 3. Xử lý khi lỗi kết nối / gửi thất bại
     if (form) form.style.display = "none";
     let successScreen = $("#successScreen");
     if (!successScreen) {
